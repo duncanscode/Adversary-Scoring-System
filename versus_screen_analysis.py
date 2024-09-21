@@ -85,8 +85,9 @@ def extract_text_from_region(image, region, region_name):
     custom_config = r'--oem 3 --psm 7 -c tessedit_char_whitelist=ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789<>'
     text = pytesseract.image_to_string(gray_image, config=custom_config).strip()
 
-    # Save the cropped image
-    cv2.imwrite(filename, cropped_image)
+    # Save the cropped image for debugging if required
+    # DEBUGGING ONLY
+    # cv2.imwrite(filename, cropped_image)
     
     # Post-process the text (e.g., remove non-alphanumeric characters)
     cleaned_text = re.sub(r'[^A-Za-z0-9<>]', '', text)
@@ -96,7 +97,8 @@ def extract_text_from_region(image, region, region_name):
     return clan_removed
 
 def fuzzy_match_map_name(extracted_map_name, current_map_pool):
-    print(f"Original extracted map name: '{extracted_map_name}'")
+    # DEBUGGING
+    # print(f"Original extracted map name: '{extracted_map_name}'")
     
     if not extracted_map_name:
         print("Extracted map name is empty")
@@ -105,15 +107,12 @@ def fuzzy_match_map_name(extracted_map_name, current_map_pool):
     # Remove any non-alphanumeric characters and convert to lowercase
     cleaned_map_name = ''.join(char.lower() for char in extracted_map_name if char.isalnum() or char.isspace()).strip()
     
-    print(f"Cleaned map name: '{cleaned_map_name}'")
+    # DEBUGGING
+    # print(f"Cleaned map name: '{cleaned_map_name}'")
     
     if not cleaned_map_name:
         print("Cleaned map name is empty")
         return None
-    
-    print("Current map pool:")
-    for map_name in current_map_pool:
-        print(f"  - '{map_name}'")
     
     # Perform fuzzy matching
     best_match, score = process.extractOne(cleaned_map_name, current_map_pool)
@@ -135,9 +134,9 @@ def scrape_details():
     opponent_name = extract_text_from_region(image, opponent_name_region, "opponent_name_region")
     map_name = extract_text_from_region(image, map_name_region, "map_name_region")
     
-    print(f"Extracted user name: '{user_name}'")
-    print(f"Extracted opponent name: '{opponent_name}'")
-    print(f"Extracted map name: '{map_name}'")
+    # print(f"Extracted user name: '{user_name}'")
+    # print(f"Extracted opponent name: '{opponent_name}'")
+    # print(f"Extracted map name: '{map_name}'")
     
     # Attempt to fuzzy match the map name
     matched_map_name = fuzzy_match_map_name(map_name, current_map_pool)
@@ -146,8 +145,9 @@ def scrape_details():
         player1 = user_name
         player2 = opponent_name
         
-        print(f"Cleaned player1: '{player1}'")
-        print(f"Cleaned player2: '{player2}'")
+        # DEBUGGING
+        # print(f"Player1: '{player1}'")
+        # print(f"Player2: '{player2}'")
         
         if player1.lower() != username.lower():
             opponent_name = player1
