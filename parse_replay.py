@@ -1,7 +1,7 @@
 from zephyrus_sc2_parser import parse_replay
 from database import save_to_db, fetch_data
 
-def replay_parser(filepath):
+def replay_parser(filepath, my_username):
     print(f"Parsing replay: {filepath}")
     replay_data = parse_replay(filepath)
     
