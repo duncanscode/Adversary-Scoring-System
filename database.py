@@ -17,9 +17,16 @@ def init_db():
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS user_info (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                username TEXT UNIQUE,
+                replay_path TEXT
+            )
+        ''')
         conn.commit()
         conn.close()
-        print("Database initialized and table created")
+        print("Database initialized and tables created")
 
 def get_connection():
     """Create a database connection to the SQLite database."""
@@ -58,6 +65,33 @@ def save_to_db(opponent_name, map_name, wins, losses):
             print("Data saved successfully")
         except sqlite3.Error as e:
             print(f"Error saving to database: {e}")
+        finally:
+            conn.close()
+
+def save_user_info(username, replay_path):
+    conn = get_connection()
+    if conn:
+        try:
+            c = conn.cursor()
+            c.execute('INSERT OR REPLACE INTO user_info (id, username, replay_path) VALUES (1, ?, ?)', (username, replay_path))
+            conn.commit()
+            print("User info saved successfully")
+        except sqlite3.Error as e:
+            print(f"Error saving user info to database: {e}")
+        finally:
+            conn.close()
+
+def get_user_info():
+    conn = get_connection()
+    if conn:
+        try:
+            c = conn.cursor()
+            c.execute('SELECT username, replay_path FROM user_info WHERE id = 1')
+            result = c.fetchone()
+            return result if result else (None, None)
+        except sqlite3.Error as e:
+            print(f"Error retrieving user info from database: {e}")
+            return None, None
         finally:
             conn.close()
 

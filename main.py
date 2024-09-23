@@ -1,19 +1,44 @@
-from database import init_db
+from database import init_db, get_user_info, save_user_info
 from versus_screen_analysis import detect_loading_screen
 from replay_watcher import watch_replay_folder
 import time
+import os
+
+def get_user_input():
+    username, replay_path = get_user_info()
+    
+    if not username:
+        while True:
+            username = input("Please enter your StarCraft II username: ").strip()
+            if username:
+                break
+            print("Username cannot be empty. Please try again.")
+    
+    if not replay_path or not os.path.exists(replay_path):
+        while True:
+            replay_path = input("Please enter the full path to your StarCraft II replay folder: ").strip()
+            if os.path.exists(replay_path):
+                break
+            print("Invalid path. Please make sure the folder exists.")
+    
+    save_user_info(username, replay_path)
+    return username, replay_path
 
 def main():
     # Initialize the database
     init_db()
 
-    replay_folder_path = "C:/Users/Pablo/Documents/StarCraft II/Accounts/50459048/1-S2-1-3384607/Replays/Multiplayer"
+    # Get or prompt for username and replay path
+    username, replay_folder_path = get_user_input()
+    
+    print(f"Welcome, {username}!")
+    print(f"Using replay folder: {replay_folder_path}")
 
     while True:
-        if detect_loading_screen():
+        if detect_loading_screen(username):
             print("Watching replay folder for new replays...")
             while True:
-                new_replay_detected = watch_replay_folder(replay_folder_path)
+                new_replay_detected = watch_replay_folder(replay_folder_path, username)
                 if new_replay_detected:
                     print("New replay detected and analyzed. Restarting loading screen monitoring...")
                     break

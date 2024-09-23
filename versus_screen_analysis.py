@@ -25,7 +25,6 @@ user_name_region = (245, 439, 200, 27)  # (x, y, width, height) for your usernam
 opponent_name_region = (1470, 440, 200, 27)  # (x, y, width, height) for opponent's username
 map_name_region = (750, 693, 430, 60)  # (x, y, width, height) for map name
 full_screen_region = (0, 0, 1920, 1080)
-username = 'PablosCruise'
 
 current_map_pool = [
     "Alcyone LE",
@@ -54,7 +53,7 @@ def check_loading_screen():
 
     return result  # All points must match exactly
 
-def detect_loading_screen():
+def detect_loading_screen(username):
     print("Detecting loading screen")
     consecutive_detections = 0
     
@@ -63,7 +62,7 @@ def detect_loading_screen():
             consecutive_detections += 1
             if consecutive_detections >= 3:  # Require 3 consecutive detections
                 print("Loading screen detected!")
-                scrape_details()
+                scrape_details(username)
                 return True
         else:
             consecutive_detections = 0
@@ -112,7 +111,7 @@ def fuzzy_match_map_name(extracted_map_name, current_map_pool):
     
     if not cleaned_map_name:
         print("Cleaned map name is empty")
-        return None
+        return None 
     
     # Perform fuzzy matching
     best_match, score = process.extractOne(cleaned_map_name, current_map_pool)
@@ -126,7 +125,7 @@ def fuzzy_match_map_name(extracted_map_name, current_map_pool):
         print(f"No good match found. Best score was {score}")
         return None
 
-def scrape_details():
+def scrape_details(username):
     image = capture_screen()
     # Extract text from defined regions
     full_screen = extract_text_from_region(image, full_screen_region, "full-screen")
@@ -176,9 +175,8 @@ def calculate_win_loss(oppname):
     
     return total_wins, total_losses
 
-# This function is now standalone and can be called from main.py
-def main_detect_loading_screen():
-    if detect_loading_screen():
+def main_detect_loading_screen(username):
+    if detect_loading_screen(username):
         print("Loading screen detected and details scraped.")
         return True
     return False
