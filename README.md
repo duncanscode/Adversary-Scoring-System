@@ -1,4 +1,8 @@
 # SC2 Adversary Scoring System #
+
+Because SC2 Zephyrus Parser is a bit outdated, you won't be able to run this application immediately.
+I will clean up my fork and publish it soon.
+
 Starcraft 2 will never be a dead game.
 As financial support for pros and the tournament system wanes, I wanted to find a way to maintain the competitive intrigue.
 I watch way too many starcraft 2 streamers, but often their ladder grinding can be monotenous, devoid of any "story" or emotional investment.
