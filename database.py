@@ -4,9 +4,12 @@ import os
 DB_FILE = 'starcraft_matches.db'
 
 def init_db():
-    if not os.path.exists(DB_FILE):
+    print("Initializing database...")
+    conn = None
+    try:
         conn = sqlite3.connect(DB_FILE)
         c = conn.cursor()
+        
         c.execute('''
             CREATE TABLE IF NOT EXISTS matches (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -17,6 +20,8 @@ def init_db():
                 timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+        print("matches table checked/created")
+        
         c.execute('''
             CREATE TABLE IF NOT EXISTS user_info (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -24,9 +29,15 @@ def init_db():
                 replay_path TEXT
             )
         ''')
+        print("user_info table checked/created")
+        
         conn.commit()
-        conn.close()
-        print("Database initialized and tables created")
+        print("Database initialized and tables created/checked")
+    except sqlite3.Error as e:
+        print(f"An error occurred: {e}")
+    finally:
+        if conn:
+            conn.close()
 
 def get_connection():
     """Create a database connection to the SQLite database."""
@@ -94,6 +105,3 @@ def get_user_info():
             return None, None
         finally:
             conn.close()
-
-# Initialize the database when this module is imported
-init_db()
