@@ -1,8 +1,10 @@
 from database import init_db, get_user_info, save_user_info
 from versus_screen_analysis import detect_loading_screen
 from replay_watcher import watch_replay_folder
+from web_server import run_server
 import time
 import os
+import threading
 
 def get_user_input():
     username, replay_path = get_user_info()
@@ -34,13 +36,19 @@ def main():
     print(f"Welcome, {username}!")
     print(f"Using replay folder: {replay_folder_path}")
 
+    # Start the web server in a separate thread
+    web_server_thread = threading.Thread(target=run_server)
+    web_server_thread.start()
+
+    print("Web server started. You can now add a Browser Source in OBS with the URL: http://localhost:5000")
+
     while True:
         if detect_loading_screen(username):
             print("Watching replay folder for new replays...")
             while True:
                 new_replay_detected = watch_replay_folder(replay_folder_path, username)
                 if new_replay_detected:
-                    print("New replay detected and analyzed. Restarting loading screen monitoring...")
+                    print("Restarting loading screen monitoring...")
                     break
                 time.sleep(10)  # Check for new replays every 10 seconds
         time.sleep(0.5)  # Small delay before checking loading screen again

@@ -22,8 +22,6 @@ class ReplayHandler(FileSystemEventHandler):
                     self.new_replay_detected = True
                 else:
                     print(f"File no longer exists: {file_path}")
-            else:
-                print(f"Ignored file: {file_path}")
 
 def watch_replay_folder(folder_path, username):
     print("Watching replay folder")
